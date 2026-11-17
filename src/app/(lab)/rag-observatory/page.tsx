@@ -20,6 +20,7 @@ export default function RagObservatoryPage() {
   const [mode, setMode] = useState<RetrievalMode>("hybrid");
   const [stage, setStage] = useState(-1); // -1 idle, 0..5 running stages, 6 done
   const [showChunk, setShowChunk] = useState<string | null>(null);
+  const [events, setEvents] = useState<Array<{ t: string; stage: string; msg: string }>>([]);
 
   const chunks = useMemo(() => chunkDocuments(Number(chunkSize)), [chunkSize]);
   const index = useMemo(() => buildIndex(chunks), [chunks]);
@@ -30,9 +31,21 @@ export default function RagObservatoryPage() {
 
   const run = () => {
     if (stage >= 0 && stage < 6) return;
+    setEvents([]);
     setStage(0);
+    const start = Date.now();
+    const msgs = [
+      `Tokenized query → ${output.queryTerms.length} terms`,
+      `Embedded query over ${output.vocabularySize}-term vocabulary`,
+      `Scanning ${chunks.length} chunks (${mode} mode)`,
+      `Ranked candidates, ${output.results.length} above ${(threshold * 100).toFixed(0)}% threshold`,
+      `Assembled context from ${output.results.length} chunks (${output.context.length} chars)`,
+      `Pipeline complete — generation stage is intentionally omitted (no external LLM)`,
+    ];
     let s = 0;
     const iv = window.setInterval(() => {
+      const now = ((Date.now() - start) / 1000).toFixed(2);
+      setEvents((e) => [...e, { t: `+${now}s`, stage: STAGES[Math.min(s, 5)], msg: msgs[s] }]);
       s += 1;
       setStage(s);
       if (s >= 6) {
@@ -164,6 +177,26 @@ export default function RagObservatoryPage() {
               <p className="mt-2 text-[11px] text-mute">
                 In a real RAG system, this context plus the query would be sent to a language model. NEURAXIS stops here by design — no inference service is called.
               </p>
+            </div>
+          </Panel>
+
+          <Panel>
+            <PanelHeader title="Retrieval Event Timeline" sub="Pipeline execution log" right={events.length > 0 ? <Button size="sm" variant="ghost" onClick={() => setEvents([])}>Clear</Button> : undefined} />
+            <div className="max-h-56 overflow-y-auto p-4">
+              {events.length === 0 ? (
+                <EmptyState title="No retrieval events" hint="Press “Run Pipeline” to execute the simulated flow." />
+              ) : (
+                <ol className="relative space-y-2.5 border-l border-line pl-4">
+                  {events.map((e, i) => (
+                    <li key={i} className="relative text-xs">
+                      <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-accent" />
+                      <span className="mr-2 font-mono text-[10px] text-mute">{e.t}</span>
+                      <span className="mr-2 rounded border border-line bg-bg-2 px-1.5 py-px text-[10px] text-mute">{e.stage}</span>
+                      <span className="text-mute">{e.msg}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
             </div>
           </Panel>
         </div>
