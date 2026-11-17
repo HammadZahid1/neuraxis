@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
 import { RESEARCH_MODULES } from "@/lib/modules";
-import { useKeyboardShortcut } from "@/hooks";
 import { cn } from "@/lib/utils";
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -32,10 +31,6 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     onClose();
     router.push(path);
   };
-
-  useKeyboardShortcut("k", () => {
-    // toggle handled globally; palette open shortcut registered here for symmetry
-  });
 
   useEffect(() => {
     if (!open) return;

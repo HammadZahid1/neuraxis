@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight, Command, Menu, Search, Hexagon } from "lucide-react";
 import { MODULE_ICON_FALLBACK, moduleForPath } from "@/lib/modules";
 import { Badge } from "@/components/ui";
+import { NotificationsMenu } from "@/components/lab/notifications";
 
 export function TopBar({ onOpenSidebar, onOpenPalette }: { onOpenSidebar: () => void; onOpenPalette: () => void }) {
   const pathname = usePathname();
@@ -37,6 +38,8 @@ export function TopBar({ onOpenSidebar, onOpenPalette }: { onOpenSidebar: () => 
           <Command className="h-3 w-3" />K
         </kbd>
       </button>
+
+      <NotificationsMenu />
 
       <Badge tone="violet" className="hidden lg:inline-flex">
         <Hexagon className="h-3 w-3" /> Local Workspace
