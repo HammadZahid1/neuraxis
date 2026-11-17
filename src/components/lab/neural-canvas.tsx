@@ -8,10 +8,11 @@ const PAD_X = 70, PAD_Y = 46;
 
 export interface Viewport { zoom: number; panX: number; panY: number }
 
-export function NeuralCanvas({ net, running, onSelect, selected }: {
+export function NeuralCanvas({ net, running, onSelect, selected, activeLayer }: {
   net: NeuralNetwork;
   running: boolean;
   selected: NNNode | null;
+  activeLayer: number;
   onSelect: (n: NNNode) => void;
 }) {
   const [vp, setVp] = useState<Viewport>({ zoom: 1, panX: 0, panY: 0 });
@@ -74,6 +75,9 @@ export function NeuralCanvas({ net, running, onSelect, selected }: {
               <g key={n.id} onClick={() => onSelect(n)} className="cursor-pointer">
                 {act > 0.02 && (
                   <circle cx={p.x} cy={p.y} r={r + 7} fill="#00d9ff" opacity={act * 0.16} />
+                )}
+                {activeLayer === n.layer && running && (
+                  <circle cx={p.x} cy={p.y} r={r + 4} fill="none" stroke="#a78bfa" strokeWidth={1.6} opacity={0.85} />
                 )}
                 <circle
                   cx={p.x} cy={p.y} r={r}

@@ -84,6 +84,13 @@ export function forwardPass(net: NeuralNetwork, inputSeed: number): NeuralNetwor
   return { ...net, nodes };
 }
 
+export function waveProgress(net: NeuralNetwork, tick: number): number {
+  // Signal sweeps input -> output and restarts. Returns active layer index or -1 during "refractory".
+  const cycle = net.config.length + 1;
+  const t = tick % cycle;
+  return t < net.config.length ? t : -1;
+}
+
 export function connectionCount(config: number[]) {
   let total = 0;
   for (let i = 0; i < config.length - 1; i++) total += config[i] * config[i + 1];

@@ -7,7 +7,7 @@ import { useInterval } from "@/hooks";
 import { useToast } from "@/components/toast";
 import {
   ARCHITECTURE_PRESETS, architectureType, connectionCount,
-  createNetwork, forwardPass, parameterCount, type NNNode,
+  createNetwork, forwardPass, parameterCount, waveProgress, type NNNode,
 } from "@/lib/sim/neural-network";
 
 export default function NeuralStudioPage() {
@@ -30,6 +30,7 @@ export default function NeuralStudioPage() {
 
   const baseNet = useMemo(() => createNetwork(config, 7), [config, netKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const net = useMemo(() => forwardPass(baseNet, tick), [baseNet, tick]);
+  const activeLayer = useMemo(() => waveProgress(baseNet, tick), [baseNet, tick]);
 
   useInterval(() => setTick((t) => t + 1), running ? 650 : null);
 
@@ -80,7 +81,29 @@ export default function NeuralStudioPage() {
             <Stat label="Parameters" value={parameterCount(config).toLocaleString()} hint={architectureType(config)} />
           </div>
 
-          <NeuralCanvas net={net} running={running} selected={selected} onSelect={setSelected} />
+          <NeuralCanvas net={net} running={running} selected={selected} activeLayer={activeLayer} onSelect={setSelected} />
+
+          <Panel>
+            <PanelHeader title="Signal Propagation" sub="Layer-by-layer wave progress" />
+            <div className="flex items-center gap-2 p-4">
+              {config.map((size, li) => (
+                <div key={li} className="flex flex-1 items-center gap-2">
+                  <div
+                    className={`flex-1 rounded-md border px-2 py-1.5 text-center font-mono text-[10px] transition-colors ${
+                      activeLayer === li && running
+                        ? "border-accent/50 bg-accent/10 text-accent"
+                        : activeLayer > li && running
+                          ? "border-good/30 bg-good/5 text-good/80"
+                          : "border-line bg-bg-2 text-mute"
+                    }`}
+                  >
+                    L{li}
+                  </div>
+                  {li < config.length - 1 && <span className={`text-xs ${running && activeLayer === li ? "text-accent" : "text-mute/40"}`}>→</span>}
+                </div>
+              ))}
+            </div>
+          </Panel>
         </div>
 
         <div className="space-y-4">
