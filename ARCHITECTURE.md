@@ -1,4 +1,4 @@
-# NEURAXIS — Architecture
+# NEURAXIS Architecture
 
 ## System Overview
 
@@ -14,7 +14,7 @@ Landing (public) ──► Research Environment (route group "(lab)")
 ## Key Layers
 
 ### 1. Route group `(lab)/`
-The parentheses keep URLs flat (`/neural-studio`) while sharing one layout that mounts the sidebar, top bar, command palette, and toast provider. The module registry in `src/lib/modules.ts` is the single source of truth for navigation, the command palette, breadcrumbs, and the overview grid — adding a module means adding one registry entry + one route.
+The parentheses keep URLs flat (`/neural-studio`) while sharing one layout that mounts the sidebar, top bar, command palette, and toast provider. The module registry in `src/lib/modules.ts` is the single source of truth for navigation, the command palette, breadcrumbs, and the overview grid, so adding a module means adding one registry entry plus one route.
 
 ### 2. Simulation engines (`src/lib/sim/`)
 Pure, framework-free TypeScript. Each engine is deterministic (seeded `mulberry32` PRNG) and owns no React state:
@@ -37,12 +37,12 @@ Concepts, documents, model profiles, and the knowledge graph are static, version
 3D views (`neural-hero`, `vector-cloud`) are loaded with `next/dynamic({ ssr: false })` to keep WebGL out of the server bundle and avoid hydration issues. Charts use Recharts with the dark theme palette. Neural Studio and the Intelligence Graph use hand-rolled SVG canvases with zoom/pan transforms.
 
 ## State Management
-- Module-local React state only — no global store needed.
+- Module-local React state only. No global store needed.
 - Harmless UI preferences (sidebar collapse, matrix precision, motion flag, uptime marker) persist via a `useLocalStorage` hook with try/catch guards.
 - All sim state derives from `(config, tick)` so pause/step/reset are pure re-derivations.
 
 ## Honesty Boundaries
-Every module renders a `SimulatedBanner` that names exactly what is simulated and what is real. The RAG pipeline and Transformer Lab stop before the "generation" stage by design — no inference service is contacted anywhere in the codebase.
+Every module renders a `SimulatedBanner` that names exactly what is simulated and what is real. The RAG pipeline and Transformer Lab stop before the "generation" stage by design, and no inference service is contacted anywhere in the codebase.
 
 ## Performance Notes
 - `dpr` clamps and `powerPreference: "low-power"` on all canvases.

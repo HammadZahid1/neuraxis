@@ -2,13 +2,15 @@
 
 > **Explore the Architecture of Intelligence.**
 
-NEURAXIS is an interactive AI research & intelligence visualization environment built for engineers, researchers, and curious minds. It lets you explore neural architectures, transformer attention, semantic embeddings, autonomous agent orchestration, RAG pipelines, model comparison, ML evaluation, training dynamics, knowledge graphs, and infrastructure telemetry — **entirely in the browser, with zero external services**.
+NEURAXIS is an interactive AI research and intelligence visualization environment made for engineers, researchers, and anyone who is curious about how modern AI actually works under the hood. You can explore neural architectures, transformer attention, semantic embeddings, agent orchestration, RAG pipelines, model comparisons, ML evaluation, training dynamics, knowledge graphs, and infrastructure telemetry. Everything runs right in your browser with no external services at all.
 
 ![NEURAXIS](docs/screenshot-placeholder.png)
 
-## Product Vision
+## Why I Built This
 
-Modern AI is often experienced as an opaque black box. NEURAXIS makes the *machinery* of AI tangible: watch signals propagate through a network, inspect attention patterns token by token, walk a retrieval pipeline stage by stage, and see how hyperparameters shape training curves. It is designed to look and feel like the internal research platform of a world-class AI lab — while remaining a fully self-contained frontend.
+Most of us experience modern AI as a black box. NEURAXIS opens it up. Instead of reading about attention, you can look at it. Instead of imagining how a network propagates signals, you can watch it happen and click on individual neurons. Instead of trusting that RAG "just works," you can walk the retrieval pipeline stage by stage and see exactly why each chunk got picked.
+
+The goal was to build something that looks and feels like the internal research platform of a serious AI lab, while staying completely self-contained. There is no backend, no API keys, and nothing to sign up for. Clone it, run it, and it just works.
 
 ## Screenshots
 
@@ -19,27 +21,27 @@ Modern AI is often experienced as an opaque black box. NEURAXIS makes the *machi
 | Transformer Lab attention heatmap | `docs/screenshots/transformer-lab.png` *(add later)* |
 | Vector Explorer 3D space | `docs/screenshots/vector-explorer.png` *(add later)* |
 
-## Features
+## What's Inside
 
 ### Research modules (10)
 
-1. **Neural Studio** — configure layer counts/neuron densities (presets + custom), animate signal propagation with a layer-wave indicator, step/pause/reset, zoom & pan, per-neuron inspector (activation, bias, connections).
-2. **Transformer Lab** — clickable architecture diagram with per-stage explanations; a local educational tokenizer with deterministic token IDs; real sinusoidal positional encodings; illustrative multi-head attention heatmaps (4 heads, causal mask, hover inspection).
-3. **Vector Explorer** — 3D embedding cloud (Three.js/R3F) with 7 semantic clusters, search, cluster filters, hover/select; **real** cosine similarity, Euclidean distance, dot product, and vector angle between any two concepts.
-4. **Agent Simulator** — six simulated specialized agents, four scenarios, deterministic tick-based progression, orchestration canvas with live message edges, agent status cards, plus a timeline / task-queue / execution-trace view.
-5. **RAG Observatory** — a genuine local TF-IDF index over 8 sample documents; configurable top-K, similarity threshold, chunk size, and retrieval mode (semantic / keyword / hybrid); ranked retrieval with per-chunk explanations, context assembly preview, and a pipeline event timeline. Generation is intentionally not performed.
-6. **Model Arena** — five fictional model profiles with a spec table, capability radar chart, latency/throughput bars, and detail panel (up to 3 models side by side).
-7. **Evaluation Lab** — three sample confusion matrices; accuracy, precision, recall, and F1 **actually computed** from the matrices, per-class report, interactive matrix with class focus, per-class F1 chart, metric guide, and session evaluation history.
-8. **Training Observatory** — deterministic simulated loss/accuracy curves responding to learning rate, epochs, batch size, and optimizer; live epoch-by-epoch playback, overfitting detection signal, LR schedule, and batch statistics.
-9. **Intelligence Graph** — interactive AI knowledge graph (13 nodes, 14 labeled edges) with pan/zoom, category filters, search, node inspector, relationship tracing, and neighbor highlighting.
-10. **System Monitor** — simulated CPU/memory/GPU/latency/throughput/queue metrics with live sparklines, historical area chart, and a severity-tagged event log. Clearly labeled as simulated.
+1. **Neural Studio.** Configure layer counts and neuron densities, pick from presets or build your own, then watch signals move through the network. You can pause, step, reset, zoom, pan, and click any neuron to inspect its activation, bias, and connections.
+2. **Transformer Lab.** A clickable architecture diagram with plain-language explanations for every stage. Type your own text and the local tokenizer splits it into tokens with deterministic IDs. Real sinusoidal positional encodings and illustrative multi-head attention heatmaps you can hover over cell by cell.
+3. **Vector Explorer.** A 3D embedding cloud with 7 semantic clusters. Search for concepts, filter clusters, and compare any two vectors. The cosine similarity, Euclidean distance, dot product, and angle are genuinely computed, not faked.
+4. **Agent Simulator.** Six simulated agents with their own specialties cooperate across four scenarios. You get a live orchestration canvas, an activity timeline, a task queue, and a full execution trace.
+5. **RAG Observatory.** A real local TF-IDF index over 8 sample documents. Tune top-K, the similarity threshold, chunk size, and the retrieval mode, then watch the pipeline run. Every retrieved chunk comes with an explanation of why it ranked. The generation step is intentionally left out.
+6. **Model Arena.** Five fictional model profiles side by side. Spec table, capability radar, latency and throughput charts, and a detail panel for up to three models at once.
+7. **Evaluation Lab.** Three sample confusion matrices. Accuracy, precision, recall, and F1 are actually calculated from the matrices in your browser, with a per-class report, an interactive matrix, and a guide that explains what each number means.
+8. **Training Observatory.** Watch loss and accuracy curves evolve as you tweak the learning rate, batch size, optimizer, and epoch count. It even flags overfitting when validation loss starts drifting away from its best point.
+9. **Intelligence Graph.** An interactive knowledge graph of AI concepts. Pan, zoom, search, filter by category, and trace relationships from node to node.
+10. **System Monitor.** Simulated CPU, memory, GPU, latency, throughput, and queue metrics with live sparklines, historical charts, and an event log. Clearly labeled as simulated.
 
-### Global interaction
+### Everyday interactions
 
-- **Command palette** — `Ctrl+K` / `⌘K`, arrow-key navigation, fuzzy module search.
-- Collapsible sidebar (preference persisted to `localStorage`), responsive mobile drawer.
-- Notifications menu, toasts, tooltips, tabs, dialogs, empty states, and reset controls everywhere.
-- Reduced-motion support, keyboard-accessible controls, lazy-loaded 3D views.
+- A command palette (`Ctrl+K` or `⌘K`) with arrow-key navigation and fuzzy module search
+- A collapsible sidebar that remembers your preference
+- Toasts, tooltips, tabs, empty states, and working reset controls everywhere
+- Reduced-motion support and keyboard-accessible controls throughout
 
 ## Technology Stack
 
@@ -98,34 +100,34 @@ npm run build
 npm start
 ```
 
-## Simulation Methodology
+## How the Simulations Work
 
-NEURAXIS separates **simulation logic** (`src/lib/sim/*`, pure deterministic TypeScript) from **presentation** (React components). Two honesty rules govern every module:
+The simulation logic lives in `src/lib/sim/` as plain TypeScript with no React attached. Every engine is deterministic, seeded with `mulberry32`, so two people opening the same page see the exact same thing. Two rules shaped how all of this was built:
 
-1. **Clearly labeled** — every simulated surface carries a "simulated" banner stating what is synthetic and why.
-2. **Real math where it matters** — cosine similarity, Euclidean distance, TF-IDF retrieval scoring, softmax attention normalization, positional encodings, and all classification metrics are genuinely computed in the browser from local data. Everything else (weights, agent behavior, training curves, telemetry) is deterministic procedural generation — reproducible, seeded, and never presented as real inference or real monitoring.
+1. **Be honest about what is simulated.** Every module shows a "simulated" banner that says exactly which parts are synthetic and why. Nothing pretends to be real inference.
+2. **Use real math wherever it counts.** Cosine similarity, Euclidean distance, TF-IDF retrieval scoring, softmax normalization, positional encodings, and every classification metric are computed for real, locally, from the data in the repo. Everything else, like the network weights, agent behavior, training curves, and telemetry, is deterministic procedural generation. It is reproducible and clearly not presented as the real thing.
 
-No API keys, databases, backends, or third-party inference services are used anywhere.
+No API keys, no databases, no backend, and no third-party inference services are used anywhere in the codebase.
 
 ## Technical Limitations
 
-- All "models" are fictional illustrations; nothing performs real neural inference.
-- The tokenizer is educational (whitespace/punctuation), not subword BPE.
-- 3D scenes target mid-range hardware; a WebGL-capable browser is required for the hero and Vector Explorer.
-- Preferences live in `localStorage`; clearing site data resets them.
+- There are no real models here and nothing performs real neural inference. That is the whole point, but worth saying plainly.
+- The tokenizer is a simple educational one. It splits on words and punctuation rather than using subword BPE like production models do.
+- The 3D scenes need a browser with WebGL. The hero and Vector Explorer have no fallback view yet.
+- Preferences live in `localStorage`, so clearing your browser's site data resets them.
 
 ## Roadmap
 
-- [ ] Export/share a module snapshot as PNG
+- [ ] Export a module snapshot as a shareable PNG
 - [ ] Backpropagation visualization in Neural Studio
-- [ ] Additional attention-head patterns and BPE-style tokenizer demo
-- [ ] Graph editor (add/remove nodes and edges)
+- [ ] More attention-head patterns and a BPE-style tokenizer demo
+- [ ] Graph editor for adding and removing nodes and edges
 - [ ] Dark/light theme toggle
 
-## Contribution Guidelines
+## Contributing
 
-Issues and PRs are welcome. Keep changes consistent with the existing structure: simulation logic goes in `src/lib/sim/`, sample data in `src/lib/data/`, and keep every simulated surface honestly labeled. Run `npm run typecheck` and `npm run build` before submitting.
+Issues and pull requests are welcome. Keep new simulation logic in `src/lib/sim/` and sample data in `src/lib/data/`, and please keep every simulated surface honestly labeled. Run `npm run typecheck` and `npm run build` before submitting so CI stays green.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE) for the full text.
