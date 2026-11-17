@@ -5,6 +5,7 @@ import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { CATEGORY_COLORS, CONCEPTS, type Concept } from "@/lib/data/concepts";
+import { usePrefersReducedMotion } from "@/hooks";
 
 function ConceptSphere({ concept, color, selected, onHover, onSelect }: {
   concept: Concept;
@@ -46,12 +47,13 @@ function ConceptSphere({ concept, color, selected, onHover, onSelect }: {
   );
 }
 
-function Scene({ visible, selected, hoverWord, onHover, onSelect }: {
+function Scene({ visible, selected, hoverWord, onHover, onSelect, autoRotate }: {
   visible: Set<string>;
   selected: Concept | null;
   hoverWord: string | null;
   onHover: (c: Concept | null) => void;
   onSelect: (c: Concept) => void;
+  autoRotate: boolean;
 }) {
   const points = useMemo(() => CONCEPTS.filter((c) => visible.has(c.category)), [visible]);
   return (
@@ -70,7 +72,7 @@ function Scene({ visible, selected, hoverWord, onHover, onSelect }: {
           onSelect={onSelect}
         />
       ))}
-      <OrbitControls enableDamping dampingFactor={0.12} minDistance={4} maxDistance={26} autoRotate autoRotateSpeed={0.35} />
+      <OrbitControls enableDamping dampingFactor={0.12} minDistance={4} maxDistance={26} autoRotate={autoRotate} autoRotateSpeed={0.35} />
     </>
   );
 }
@@ -82,6 +84,7 @@ export default function VectorCloud({ visible, selected, onSelect }: {
 }) {
   const [hover, setHover] = useState<Concept | null>(null);
   const allCategories = useMemo(() => new Set(CONCEPTS.map((c) => c.category)), []);
+  const reduced = usePrefersReducedMotion();
 
   return (
     <div className="relative h-[460px] overflow-hidden rounded-xl border border-line bg-bg-2">
@@ -92,6 +95,7 @@ export default function VectorCloud({ visible, selected, onSelect }: {
           hoverWord={hover?.word ?? null}
           onHover={setHover}
           onSelect={onSelect}
+          autoRotate={!reduced}
         />
       </Canvas>
       <div className="pointer-events-none absolute left-3 top-3 flex flex-wrap gap-1.5">

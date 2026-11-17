@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Group, Points as ThreePoints } from "three";
-import { usePrefersReducedMotion } from "@/hooks";
+import { useLocalStorage, usePrefersReducedMotion } from "@/hooks";
 
 /* Deterministic PRNG so the structure is identical on every load */
 function mulberry32(seed: number) {
@@ -118,6 +118,8 @@ function Structure({ reduced }: { reduced: boolean }) {
 
 export default function NeuralHero() {
   const reduced = usePrefersReducedMotion();
+  const [animEnabled] = useLocalStorage("nx-anim-enabled", true);
+  const still = reduced || !animEnabled;
   return (
     <Canvas
       camera={{ position: [0, 0.6, 9.5], fov: 42 }}
@@ -128,7 +130,7 @@ export default function NeuralHero() {
       <ambientLight intensity={0.5} />
       <pointLight position={[4, 3, 5]} intensity={30} color="#00d9ff" distance={18} />
       <pointLight position={[-5, -2, 3]} intensity={22} color="#7667ff" distance={18} />
-      <Structure reduced={reduced} />
+      <Structure reduced={still} />
     </Canvas>
   );
 }

@@ -5,6 +5,7 @@ import { PageHeader, Panel, PanelHeader, Select, Tabs, Tooltip } from "@/compone
 import { TransformerDiagram, TRANSFORMER_STAGES } from "@/components/lab/transformer-diagram";
 import { AttentionHeatmap } from "@/components/lab/attention-heatmap";
 import { attentionMatrix, HEAD_NAMES, positionalEncoding, tokenize } from "@/lib/sim/transformer";
+import { useLocalStorage } from "@/hooks";
 
 const SAMPLE = "The transformer architecture revolutionized modern machine learning.";
 
@@ -12,6 +13,7 @@ export default function TransformerLabPage() {
   const [tab, setTab] = useState("architecture");
   const [text, setText] = useState(SAMPLE);
   const [head, setHead] = useState("0");
+  const [matrixPrecision] = useLocalStorage("nx-matrix-precision", 2);
   const [stage, setStage] = useState<string | null>("attention");
   const info = TRANSFORMER_STAGES.find((s) => s.id === stage);
 
@@ -129,7 +131,7 @@ export default function TransformerLabPage() {
               />
               <div className="p-4">
                 {tokens.length > 0 ? (
-                  <AttentionHeatmap tokens={tokens} matrix={matrix} precision={2} />
+                  <AttentionHeatmap tokens={tokens} matrix={matrix} precision={Number(matrixPrecision)} />
                 ) : (
                   <p className="py-8 text-center text-xs text-mute">Tokenize text above to generate the attention map.</p>
                 )}
