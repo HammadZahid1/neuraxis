@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, BrainCircuit, ChevronRight, Hexagon, Github,
+  ArrowRight, ChevronRight, Hexagon, Github,
 } from "lucide-react";
 import { RESEARCH_MODULES } from "@/lib/modules";
+import dynamic from "next/dynamic";
+
+const NeuralHero = dynamic(() => import("@/components/landing/neural-hero"), { ssr: false });
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -89,11 +92,9 @@ export default function LandingPage() {
             className="relative h-[340px] overflow-hidden rounded-2xl border border-line bg-panel/60 md:h-[460px]"
           >
             <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center" id="hero-visual-slot">
-                <BrainCircuit className="mx-auto h-10 w-10 text-accent/70" />
-                <p className="mt-3 font-mono text-xs text-mute">procedural neural structure · loading</p>
-              </div>
+            <NeuralHero />
+            <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[10px] text-mute/70">
+              procedural feedforward structure · 27 nodes · client-rendered
             </div>
           </motion.div>
         </div>
